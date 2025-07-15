@@ -106,6 +106,26 @@ function getInfoBlockHtml(amountNum) {
   return '';
 }
 
+// Рендерит только блок выбора срока
+function renderTermButtons() {
+  const termBtnsContainer = document.querySelector('.term-btns');
+  if (!termBtnsContainer) return;
+  termBtnsContainer.innerHTML = TERMS.map(term => `
+    <button class="term-btn${state.term === term ? ' selected' : ''}" data-term="${term}">${term} мес</button>
+  `).join('');
+  // Навешиваем обработчики
+  termBtnsContainer.querySelectorAll('.term-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      state.term = parseInt(btn.dataset.term);
+      renderTermButtons();
+      // Можно добавить обновление платежа и других зависимых значений:
+      state.payment = calcPayment(state.amount, state.term);
+      state.serviceFee = calcServiceFee(state.amount, state.term);
+      document.querySelector('.card-title').textContent = formatMoney(state.payment) + ' в месяц';
+    });
+  });
+}
+
 function renderCalculator() {
   document.title = 'Рассрочка';
   const app = document.getElementById('app');
@@ -132,6 +152,9 @@ function renderCalculator() {
       if (!document.getElementById('infoBlock')) {
         infoBlockContainer.innerHTML = getInfoBlockHtml(amountNum);
         document.getElementById('infoBlock').addEventListener('click', () => {
+          // Клик по info на экране выбора условий рассрочки
+          sendGA('5639_click_choose_loan_more_info_var4');
+          sendYM('5639_click_choose_loan_more_info_var4');
           infoBackHash = location.hash;
           location.hash = 'info';
         });
@@ -139,6 +162,8 @@ function renderCalculator() {
     } else {
       infoBlockContainer.innerHTML = '';
     }
+    // Ререндерим только блок выбора срока
+    renderTermButtons();
     return;
   }
   // Первый рендер — создаём всю разметку
@@ -150,9 +175,7 @@ function renderCalculator() {
     <input id="amount" type="number" value="${state.amount}" autocomplete="off" class="" />
     <div style="color:#888;font-size:1rem;margin-bottom:16px;">от 1 000 ₽ до 100 000 ₽</div>
     <div style="color:#888;font-size:1.1rem;">Выберите срок</div>
-    <div class="term-btns">
-      ${TERMS.map(term => `<button class="term-btn${state.term === term ? ' selected' : ''}" data-term="${term}">${term} мес</button>`).join('')}
-    </div>
+    <div class="term-btns"></div>
     <div class="card">
       <div class="card-title">${formatMoney(calcPayment(state.amount, state.term))} в месяц</div>
       <small>включая плату за услугу</small>
@@ -165,12 +188,7 @@ function renderCalculator() {
     // Не делаем полный ререндер, только обновляем инфоблок и связанные значения
     renderCalculator();
   });
-  document.querySelectorAll('.term-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      state.term = parseInt(btn.dataset.term);
-      renderCalculator();
-    });
-  });
+  renderTermButtons();
   document.getElementById('nextBtn').addEventListener('click', () => {
     // Клик по кнопке "Продолжить"
     sendGA('5639_click_continue_var4');
