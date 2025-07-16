@@ -87,7 +87,7 @@ function getInfoBlockHtml(amountNum) {
             <path fill-rule="evenodd" clip-rule="evenodd" d="M22.001 12.0078C22.001 17.5307 17.5238 22.0078 12.001 22.0078C6.47813 22.0078 2.00098 17.5307 2.00098 12.0078C2.00098 6.48496 6.47813 2.00781 12.001 2.00781C17.5238 2.00781 22.001 6.48496 22.001 12.0078ZM20.001 12.0078C20.001 16.4261 16.4193 20.0078 12.001 20.0078C7.5827 20.0078 4.00098 16.4261 4.00098 12.0078C4.00098 7.58953 7.5827 4.00781 12.001 4.00781C16.4193 4.00781 20.001 7.58953 20.001 12.0078Z" fill="#212124"/>
           </svg>
         </span>
-        <span class="info-text">Сумму рассрочки до 49 999 ₽ зачислим сразу</span>
+        <span class="info-text">Деньги могут прийти не сразу. Рассказываем, почему так</span>
         <span class="info-arrow" aria-hidden="true">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_7502_6226)">
@@ -266,7 +266,7 @@ function renderConfirm() {
 }
 
 function renderInfo() {
-  document.title = 'Порядок зачисления суммы рассрочки';
+  document.title = 'Почему деньги могут зачислиться не сразу';
   // Первый рендер экрана информации после клика на info
   if (!analyticsFlags.moreInfo) {
     sendGA('5639_page_view_more_info_var4');
@@ -279,17 +279,18 @@ function renderInfo() {
         <path fill-rule="evenodd" clip-rule="evenodd" d="M31 18.4L29.6 17L24 22.6L18.4 17L17 18.4L22.6 24L17 29.6L18.4 31L24 25.4L29.6 31L31 29.6L25.4 24L31 18.4Z" fill="#0E0E0E"/>
       </svg>
     </button>
-    <h2 class="screen-title" style="margin-top:32px;">Порядок зачисления<br>суммы рассрочки</h2>
-    <p style="font-size:1.15rem;margin-bottom:18px;">По закону о защите от мошенничества, кредитные деньги зачислим<br>через некоторое время.</p>
-    <p style="font-size:1.15rem;margin-bottom:18px;">Срок зачисления зависит от суммы долга по действующим рассрочкам и суммы новой рассрочки</p>
+    <h2 class="screen-title" style="margin-top:32px;">Почему деньги могут<br>зачислиться не сразу</h2>
+    <p style="font-size:1.15rem;margin-bottom:18px;">Это требование закона по защите от мошенников. После одобрения рассрочки банк должен убедиться, что она была оформлена добровольно, а не под влиянием злоумышленников.</p>
     <h3 style="font-size:1.2rem;margin-top:32px;margin-bottom:16px;">Как быстро поступят деньги</h3>
+    <p style="font-size:1.15rem;margin-bottom:18px;">Зависит от суммы всех рассрочек — и новой, и действующих.</p>
     <ul class="info-list">
-      <li>до 49 999 ₽ — сразу на карту</li>
-      <li>от 50 000 до 199 999 ₽ — перечислим деньги через 4 часа или чуть позже</li>
-      <li>свыше 200 000 ₽ — перечислим деньги через 48 часов или чуть позже</li>
+      <li>Если сумма всех рассрочек не больше 49 999 ₽, деньги поступят сразу на карту.</li>
+      <li>Если от 50 000 до 200 000 ₽ — перечислим деньги через 4 часа или позже.</li>
+      <li>Если больше 200 000 ₽ — через 48 часов или позже.</li>
     </ul>
-    <h3 style="font-size:1.2rem;margin-top:32px;margin-bottom:16px;">Пример</h3>
-    <p style="font-size:1.15rem;margin-bottom:32px;">У Саши есть действующая рассрочка 35 000 ₽ и он оформляет новую рассрочку на сумму 25 000 ₽. Поскольку общая сумма составляет 60 000 рублей — новую рассрочку сможем перечислить только через 4 часа.</p>
+    <h3 style="font-size:1.2rem;margin-top:32px;margin-bottom:16px;">Как это работает</h3>
+    <p style="font-size:1.15rem;margin-bottom:18px;">Например, у Саши есть действующая рассрочка — 35 000 ₽, и он оформляет новую на сумму 25 000 ₽.</p>
+    <p style="font-size:1.15rem;margin-bottom:32px;">Общая сумма двух рассрочек — 60 000 рублей. Это значит, что деньги по новой рассрочке придут на Сашин счёт через 4 часа.</p>
     <button class="info-ok-btn" id="infoOkBtn">Понятно</button>
   `;
   document.getElementById('infoOkBtn').addEventListener('click', () => {
