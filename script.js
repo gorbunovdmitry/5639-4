@@ -244,7 +244,7 @@ function renderConfirm() {
   document.getElementById('submitBtn').addEventListener('click', () => {
     // Клик по кнопке "Оформить рассрочку" с параметрами
     const params = {
-      date: Date.now(),
+      date: new Date().toISOString(),
       variant: VARIANT,
       sum: state.amount,
       period: `${state.term} мес`,
@@ -252,7 +252,24 @@ function renderConfirm() {
     };
     sendGA('5639_click_agreement_make_deal_var4', params);
     sendYM('5639_click_agreement_make_deal_var4', params);
-    location.hash = 'success';
+    // --- ОТПРАВКА В GOOGLE ТАБЛИЦУ через FormData ---
+    const formData = new FormData();
+    formData.append('date', params.date);
+    formData.append('variant', params.variant);
+    formData.append('sum', params.sum);
+    formData.append('period', params.period);
+    formData.append('payment', params.payment);
+    fetch('https://script.google.com/macros/s/AKfycbyxpyRlyk__XIl5Ih7c0RhK8PIAuqOmmr9MH6RaNgIA4rGg75xVW1FOCbvcS8TbEk2b/exec', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.text())
+    .then(result => {
+      location.hash = 'success';
+    })
+    .catch(error => {
+      alert('Ошибка отправки данных в Google Таблицу');
+    });
   });
   if (infoBlockHtml) {
     document.getElementById('infoBlock').addEventListener('click', () => {
