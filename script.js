@@ -87,7 +87,7 @@ function getInfoBlockHtml(amountNum) {
             <path fill-rule="evenodd" clip-rule="evenodd" d="M22.001 12.0078C22.001 17.5307 17.5238 22.0078 12.001 22.0078C6.47813 22.0078 2.00098 17.5307 2.00098 12.0078C2.00098 6.48496 6.47813 2.00781 12.001 2.00781C17.5238 2.00781 22.001 6.48496 22.001 12.0078ZM20.001 12.0078C20.001 16.4261 16.4193 20.0078 12.001 20.0078C7.5827 20.0078 4.00098 16.4261 4.00098 12.0078C4.00098 7.58953 7.5827 4.00781 12.001 4.00781C16.4193 4.00781 20.001 7.58953 20.001 12.0078Z" fill="#212124"/>
           </svg>
         </span>
-        <span class="info-text">Деньги могут прийти не сразу. Рассказываем, почему так</span>
+        <span class="info-text">Деньги могут прийти не сразу. Рассказываем, почему так. Чтобы получить деньги сейчас, уменьшите сумму рассрочки</span>
         <span class="info-arrow" aria-hidden="true">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_7502_6226)">
@@ -242,9 +242,16 @@ function renderConfirm() {
     location.hash = '';
   });
   document.getElementById('submitBtn').addEventListener('click', () => {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
     // Клик по кнопке "Оформить рассрочку" с параметрами
+    function formatDateForSheet(date) {
+      const pad = n => n.toString().padStart(2, '0');
+      return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    }
+    const now = new Date();
     const params = {
-      date: new Date().toISOString(),
+      date: formatDateForSheet(now),
       variant: VARIANT,
       sum: state.amount,
       period: `${state.term} мес`,
@@ -260,16 +267,17 @@ function renderConfirm() {
     formData.append('period', params.period);
     formData.append('payment', params.payment);
     fetch('https://script.google.com/macros/s/AKfycbyxpyRlyk__XIl5Ih7c0RhK8PIAuqOmmr9MH6RaNgIA4rGg75xVW1FOCbvcS8TbEk2b/exec', {
-      method: 'POST',
-      body: formData
+      redirect: "follow",
+        method: 'POST',
+      body: JSON.stringify({ date: params.date, variant: params.variant,
+         sum: params.sum, period: params.period, payment: params.payment }),
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+        },
     })
-    .then(response => response.text())
-    .then(result => {
+    .then(() => {
       location.hash = 'success';
-    })
-    .catch(error => {
-      alert('Ошибка отправки данных в Google Таблицу');
-    });
+    }).catch(()=> {location.hash = 'success'})
   });
   if (infoBlockHtml) {
     document.getElementById('infoBlock').addEventListener('click', () => {
